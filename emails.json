@@ -1,0 +1,964 @@
+{
+  "extractedAt": "2025-09-14T12:34:24.303Z",
+  "totalSites": 100,
+  "totalEmails": 107,
+  "sitesWithEmails": 41,
+  "results": [
+    {
+      "siteUrl": "https://www.bizople.com/",
+      "emails": [
+        "info@bizople.com",
+        "sales@bizople.com",
+        "hr@bizople.com",
+        "info@bizople.us"
+      ],
+      "emailCount": 4,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://cirronex.com/",
+      "emails": [
+        "support@cirronex.com",
+        "john@doe.com",
+        "advisoltaxconsulting@gmail.com",
+        "advisol@mail.com"
+      ],
+      "emailCount": 4,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://fresatechnologies.com/",
+      "emails": [
+        "sales@fresatechnologies.com",
+        "careers@fresatechnologies.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://crmgenesis.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://www.unlimitedsystems.com/",
+      "emails": [
+        "support@unlimitedsystems.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://empyreansolutions.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://itguidepoint.com/",
+      "emails": [
+        "plan@itguidepoint.com",
+        "thumbnail_asset-3@3x.png",
+        "thumbnail_asset-3@3x-300x55.png",
+        "thumbnail_asset-3@3x-1024x189.png",
+        "thumbnail_asset-3@3x-768x142.png",
+        "john@doe.com"
+      ],
+      "emailCount": 6,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://www.ascomp.com/",
+      "emails": [
+        "sales@ascomp.com",
+        "sales@aascomp.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://procrm.ua/",
+      "emails": [
+        "contactus@procrm.ua",
+        "username@gmail.com",
+        "example@mail.com"
+      ],
+      "emailCount": 3,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://set2close.io/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://webisoft.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://crmium.com/",
+      "emails": [
+        "info@crmium.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://www.eruditeworks.com/",
+      "emails": [
+        "marketing@eruditeworks.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://peekssot.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://tripearltech.com/",
+      "emails": [
+        "info@tripearltech.com",
+        "harshmakwanameeting@tripearltech.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://4itech.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://wearetenet.com/",
+      "emails": [
+        "hello@wearetenet.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://xillentech.com/",
+      "emails": [
+        "info@xillentech.com",
+        "career@xillentech.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://nexevolve.com/",
+      "emails": [
+        "sales@nexevolve.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://warlocktechnologies.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://ingold-solutions.de/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://depasserinfotech.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://copulaglobal.com/",
+      "emails": [
+        "info@copulaglobal.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://epnovate.com/",
+      "emails": [
+        "contact@epnovate.com",
+        "support@epnovate.com",
+        "hr@epnovate.com"
+      ],
+      "emailCount": 3,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://infintorsolutions.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://westerncanadian.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://erpone.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://pemeco.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://appliedperformance.com/",
+      "emails": [
+        "info@datafieldusa.com",
+        "sales@datafieldusa.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://mrhit.co.uk/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://sterp.in/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://sylogist.com/",
+      "emails": [
+        "asset-672@4x.webp",
+        "asset-672@4x-300x245.webp"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://advisoryis.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://umbrellaconsulting.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://erpthatworks.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://ibt.com.au/",
+      "emails": [
+        "ehodge@ibt.com.au",
+        "bwilliams@ibt.com.au",
+        "abarton@ibt.com.au",
+        "sallen@ibt.com.au",
+        "bclark@ibt.com.au",
+        "sstenhouse@ibt.com.au",
+        "rbailie@ibt.com.au"
+      ],
+      "emailCount": 7,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://disprax.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://solutionminds.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://wefurnish.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://digitalassets.me/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://e-litt.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://verticalsolutionserp.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://scheer.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://fullinsight.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://enhanzer.com/",
+      "emails": [
+        "info@enhanzer.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://guisolutions.lk/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://lotusbc.co.jp/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://imsolutions.lk/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://cyclomax.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://erpsolutions.lk/",
+      "emails": [
+        "marketing@chart.lk"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://infinitebt.co.zw/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://ebizframe.com/",
+      "emails": [
+        "marketing@ebizframe.com",
+        "bharat.gupta@ebizframe.com",
+        "swapnil.rathore@ebizframe.com",
+        "hr@essindia.com",
+        "divya.anjali@essindia.com",
+        "ankush.sharma@essindia.com",
+        "adityaguptacumail@gmail.com"
+      ],
+      "emailCount": 7,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://kabo.ng/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://softalliance.com/",
+      "emails": [
+        "info@softalliance.com",
+        "support@softalliance.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://asc-usa.com/",
+      "emails": [
+        "info@asc-usa.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://collinscomputing.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://solutionsx.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://sdlconsulting.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://i-techsupport.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://impactgroup.com/",
+      "emails": [
+        "webmaster@impactgroup.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://atlassolutions.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://admiralconsulting.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://informed-systems.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://innolance.com/",
+      "emails": [
+        "info@innolance.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://theaisgroup.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://pyruscg.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://vinasystem.com/",
+      "emails": [
+        "sales@vinasystem.com",
+        "hr@vinasystem.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://www.solvios.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://b10hub.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://forcery.com/",
+      "emails": [
+        "info@forcery.com",
+        "pr@salesforce.com",
+        "leslie.grant@salesforce.com",
+        "subscribe-astro@1x.png"
+      ],
+      "emailCount": 4,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://ambibuzz.com/",
+      "emails": [
+        "buzz.us@ambibuzz.com",
+        "jane@framer.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://cloudonhire.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://andromeda.lv/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://universalwritinghub.com/",
+      "emails": [
+        "marketing@universalwritinghub.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://synapseteam.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://ashapurasoftech.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://neenopal.com/",
+      "emails": [
+        "corporate@neenopal.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://linkingintegrating.com/",
+      "emails": [
+        "info@linkingintegrating.com.au"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://lanewaysoftware.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://innovatenow.co.nz/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://blisssystems.co.uk/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://acquiscent.com/",
+      "emails": [
+        "artboard-7@3x-e1545634416667-1.png",
+        "info@acquiscent.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://skylineconsultants.com/",
+      "emails": [
+        "info@skylineconsultants.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://akoom.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://circlecrm.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://ten5crm.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://maximizer.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://processflow.com/",
+      "emails": [
+        "info@processflow.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://www.appcino.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://leapingfrog.in/",
+      "emails": [
+        "comm@leapingfrog.in"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://wolfconsulting.vn/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://dynamicsconsulting.de/",
+      "emails": [
+        "info@dynamicsconsulting.de",
+        "info@dynamicconsulting.de",
+        "dynamics_365_team_02@2x-2.png",
+        "hr@dynamicsconsulting.de"
+      ],
+      "emailCount": 4,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://virtualobserver.com/",
+      "emails": [
+        "info@five9.com",
+        "dustin.huffman@five9.com",
+        "canada@five9.com",
+        "five9dach@five9.com",
+        "philippines@five9.com",
+        "five9benelux@five9.com",
+        "five9br@five9.com",
+        "five9es@five9.com",
+        "five9nordics@five9.com",
+        "five9latam@five9.com",
+        "cases@five9.com",
+        "pr@five9.com",
+        "referrals@five9.com",
+        "partners@five9.com",
+        "webmaster@five9.com"
+      ],
+      "emailCount": 15,
+      "totalPagesChecked": 9,
+      "hasErrors": true
+    },
+    {
+      "siteUrl": "https://zoomingsales.com/",
+      "emails": [
+        "juan@zoomingsales.com",
+        "support@zohoforms.com"
+      ],
+      "emailCount": 2,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://helixstorm.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://saturnodesign.com/",
+      "emails": [
+        "rudy@saturnodesign.com",
+        "cbozas@saturnodesign.com",
+        "efeo@saturnodesign.com",
+        "jgonzalez@saturnodesign.com",
+        "jabin@saturnodesign.com",
+        "info@saturnodesign.com"
+      ],
+      "emailCount": 6,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://automateddreams.com/",
+      "emails": [
+        "team@automateddreams.com",
+        "ad-logo-white@2x-1.webp",
+        "ad-logo-white@2x-1-300x233.webp",
+        "ad-logo-white@2x-1-650x505.webp"
+      ],
+      "emailCount": 4,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://customerintelligence.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://protrak.com/",
+      "emails": [],
+      "emailCount": 0,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    },
+    {
+      "siteUrl": "https://opsolve.com/",
+      "emails": [
+        "contactus@opsolve.com"
+      ],
+      "emailCount": 1,
+      "totalPagesChecked": 9,
+      "hasErrors": false
+    }
+  ],
+  "allEmails": [
+    "abarton@ibt.com.au",
+    "ad-logo-white@2x-1-300x233.webp",
+    "ad-logo-white@2x-1-650x505.webp",
+    "ad-logo-white@2x-1.webp",
+    "adityaguptacumail@gmail.com",
+    "advisol@mail.com",
+    "advisoltaxconsulting@gmail.com",
+    "ankush.sharma@essindia.com",
+    "artboard-7@3x-e1545634416667-1.png",
+    "asset-672@4x-300x245.webp",
+    "asset-672@4x.webp",
+    "bclark@ibt.com.au",
+    "bharat.gupta@ebizframe.com",
+    "buzz.us@ambibuzz.com",
+    "bwilliams@ibt.com.au",
+    "canada@five9.com",
+    "career@xillentech.com",
+    "careers@fresatechnologies.com",
+    "cases@five9.com",
+    "cbozas@saturnodesign.com",
+    "comm@leapingfrog.in",
+    "contact@epnovate.com",
+    "contactus@opsolve.com",
+    "contactus@procrm.ua",
+    "corporate@neenopal.com",
+    "divya.anjali@essindia.com",
+    "dustin.huffman@five9.com",
+    "dynamics_365_team_02@2x-2.png",
+    "efeo@saturnodesign.com",
+    "ehodge@ibt.com.au",
+    "example@mail.com",
+    "five9benelux@five9.com",
+    "five9br@five9.com",
+    "five9dach@five9.com",
+    "five9es@five9.com",
+    "five9latam@five9.com",
+    "five9nordics@five9.com",
+    "harshmakwanameeting@tripearltech.com",
+    "hello@wearetenet.com",
+    "hr@bizople.com",
+    "hr@dynamicsconsulting.de",
+    "hr@epnovate.com",
+    "hr@essindia.com",
+    "hr@vinasystem.com",
+    "info@acquiscent.com",
+    "info@asc-usa.com",
+    "info@bizople.com",
+    "info@bizople.us",
+    "info@copulaglobal.com",
+    "info@crmium.com",
+    "info@datafieldusa.com",
+    "info@dynamicconsulting.de",
+    "info@dynamicsconsulting.de",
+    "info@enhanzer.com",
+    "info@five9.com",
+    "info@forcery.com",
+    "info@innolance.com",
+    "info@linkingintegrating.com.au",
+    "info@processflow.com",
+    "info@saturnodesign.com",
+    "info@skylineconsultants.com",
+    "info@softalliance.com",
+    "info@tripearltech.com",
+    "info@xillentech.com",
+    "jabin@saturnodesign.com",
+    "jane@framer.com",
+    "jgonzalez@saturnodesign.com",
+    "john@doe.com",
+    "juan@zoomingsales.com",
+    "leslie.grant@salesforce.com",
+    "marketing@chart.lk",
+    "marketing@ebizframe.com",
+    "marketing@eruditeworks.com",
+    "marketing@universalwritinghub.com",
+    "partners@five9.com",
+    "philippines@five9.com",
+    "plan@itguidepoint.com",
+    "pr@five9.com",
+    "pr@salesforce.com",
+    "rbailie@ibt.com.au",
+    "referrals@five9.com",
+    "rudy@saturnodesign.com",
+    "sales@aascomp.com",
+    "sales@ascomp.com",
+    "sales@bizople.com",
+    "sales@datafieldusa.com",
+    "sales@fresatechnologies.com",
+    "sales@nexevolve.com",
+    "sales@vinasystem.com",
+    "sallen@ibt.com.au",
+    "sstenhouse@ibt.com.au",
+    "subscribe-astro@1x.png",
+    "support@cirronex.com",
+    "support@epnovate.com",
+    "support@softalliance.com",
+    "support@unlimitedsystems.com",
+    "support@zohoforms.com",
+    "swapnil.rathore@ebizframe.com",
+    "team@automateddreams.com",
+    "thumbnail_asset-3@3x-1024x189.png",
+    "thumbnail_asset-3@3x-300x55.png",
+    "thumbnail_asset-3@3x-768x142.png",
+    "thumbnail_asset-3@3x.png",
+    "username@gmail.com",
+    "webmaster@five9.com",
+    "webmaster@impactgroup.com"
+  ]
+}

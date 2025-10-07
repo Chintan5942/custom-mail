@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Codegrin — Protected Mail Sender</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --max-width:900px; --pad:18px; --accent:#0b6efe; }
+    body { font-family: Inter, Arial, sans-serif; margin:0; padding:20px; background:#f7f9fc; color:#111; }
+    .container { max-width: var(--max-width); margin:24px auto; background:#fff; border-radius:10px; box-shadow:0 6px 20px rgba(12,20,40,0.06); padding:24px; }
+    h1 { margin:0 0 8px 0; font-size:20px; color:var(--accent); }
+    p.lead { margin:0 0 18px 0; color:#556; }
+    .flex { display:flex; gap:12px; align-items:center; }
+    label { display:block; font-size:13px; color:#334; margin-bottom:6px; }
+    input[type="text"], input[type="password"], textarea, select {
+      width:100%; padding:10px 12px; border:1px solid #e3e7ee; border-radius:8px; box-sizing:border-box; font-size:14px;
+      background:#fff;
+    }
+    textarea { min-height:180px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; resize:vertical; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .btn { background:var(--accent); color:#fff; padding:10px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+    .btn.secondary { background:#eef3ff; color:var(--accent); }
+    .small { font-size:12px; color:#667; }
+    .result { margin-top:14px; white-space:pre-wrap; background:#fbfdff; border:1px solid #eef6ff; padding:12px; border-radius:8px; min-height:60px; font-family: ui-monospace, monospace; }
+    .top-right { display:flex; gap:8px; align-items:center; }
+    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .auth-toggle { display:flex; gap:8px; align-items:center; }
+    .hidden { display:none; }
+    .error { color:#c63; font-weight:600; }
+    .ok { color:green; font-weight:700; }
+    .link { color:var(--accent); cursor:pointer; text-decoration:underline; font-size:13px; }
+    footer { margin-top:18px; font-size:12px; color:#889; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Codegrin — Protected Mail Sender</h1>
+        <p class="lead">Login required. Use username <code>test</code> and the password you set on the server.</p>
+      </div>
+      <div class="top-right">
+        <div id="loggedInfo" class="small hidden">Logged in as <strong id="whoami"></strong></div>
+        <button id="logoutBtn" class="btn secondary hidden">Logout</button>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginCard">
+      <label for="username">Username</label>
+      <input id="username" type="text" placeholder="test" autocomplete="username" />
+
+      <div style="height:12px;"></div>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="HAHAHAHA" autocomplete="current-password" />
+
+      <div style="height:12px;"></div>
+
+      <div class="auth-toggle">
+        <input id="useHeader" name="authMethod" type="radio" checked />
+        <label for="useHeader" style="margin:0">Send as Basic Auth header (recommended)</label>
+      </div>
+      <div class="auth-toggle">
+        <input id="useBody" name="authMethod" type="radio" />
+        <label for="useBody" style="margin:0">Send credentials in JSON body (not recommended)</label>
+      </div>
+
+      <div style="height:14px;"></div>
+
+      <div class="flex" style="justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:8px;">
+          <button id="loginBtn" class="btn">Login</button>
+          <button id="demoFill" class="btn secondary" type="button">Fill demo creds</button>
+        </div>
+        <div class="small">Session credentials are stored in <code>sessionStorage</code>.</div>
+      </div>
+
+      <div id="loginError" class="error" style="margin-top:12px; display:none"></div>
+    </div>
+
+    <!-- MAIN UI -->
+    <div id="appCard" class="hidden" style="margin-top:18px;">
+      <label for="emails"><strong>Paste recipient emails (one per line)</strong></label>
+      <textarea id="emails" placeholder="user1@example.com\nuser2@example.com"></textarea>
+
+      <div style="height:12px;"></div>
+
+      <div class="row">
+        <div>
+          <label for="subject">Subject</label>
+          <input id="subject" type="text" value="Proposal for Development Partnership – Codegrin Technologies" />
+        </div>
+        <div>
+          <label for="sendMethod">Auth method (current session)</label>
+          <select id="sendMethod">
+            <option value="header">Basic Auth header</option>
+            <option value="body">Send credentials in JSON body</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:12px;"></div>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button id="sendBtn" class="btn">Send Emails</button>
+        <button id="previewBtn" class="btn secondary">Preview First Email (no send)</button>
+        <div class="small">Clear results with <span id="clearBtn" class="link">Clear</span></div>
+      </div>
+
+      <div class="result" id="result">No activity yet.</div>
+    </div>
+
+    <footer>
+      <div>Be careful — credentials are sent to <code>/send</code>. For production use HTTPS and environment-based server-side credentials.</div>
+    </footer>
+  </div>
+
+  <script>
+    // Helpers
+    const EXPECTED_USER = "info-codegrin"; // info for UI only (server validates)
+    const loginBtn = document.getElementById('loginBtn');
+    const demoFill = document.getElementById('demoFill');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginCard = document.getElementById('loginCard');
+    const appCard = document.getElementById('appCard');
+    const loginError = document.getElementById('loginError');
+    const whoami = document.getElementById('whoami');
+    const loggedInfo = document.getElementById('loggedInfo');
+    const resultEl = document.getElementById('result');
+
+    // On page load, check if session has creds
+    function isLoggedIn() {
+      return !!sessionStorage.getItem('cg_user') && !!sessionStorage.getItem('cg_pass');
+    }
+
+    function showApp() {
+      loginCard.classList.add('hidden');
+      appCard.classList.remove('hidden');
+      logoutBtn.classList.remove('hidden');
+      loggedInfo.classList.remove('hidden');
+      whoami.textContent = sessionStorage.getItem('cg_user') || '(unknown)';
+      // Sync preferred method
+      const useHeaderRadio = document.getElementById('useHeader');
+      const useBodyRadio = document.getElementById('useBody');
+      const sendMethod = document.getElementById('sendMethod');
+      sendMethod.value = sessionStorage.getItem('cg_method') || (useHeaderRadio.checked ? 'header' : 'body');
+    }
+
+    function showLogin() {
+      loginCard.classList.remove('hidden');
+      appCard.classList.add('hidden');
+      logoutBtn.classList.add('hidden');
+      loggedInfo.classList.add('hidden');
+      whoami.textContent = '';
+    }
+
+    // Initialize UI state
+    if (isLoggedIn()) showApp();
+
+    // Fill demo credentials quickly (for testing)
+    demoFill.addEventListener('click', () => {
+      document.getElementById('username').value = 'test';
+      document.getElementById('password').value = 'HAHAHAHA';
+      document.getElementById('useHeader').checked = true;
+    });
+
+    // Login button
+    loginBtn.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      loginError.style.display = 'none';
+      const user = document.getElementById('username').value?.trim();
+      const pass = document.getElementById('password').value ?? '';
+      const method = document.getElementById('useHeader').checked ? 'header' : 'body';
+
+      if (!user || !pass) {
+        loginError.textContent = "Please enter username and password.";
+        loginError.style.display = 'block';
+        return;
+      }
+
+      // Save to sessionStorage (only for this browser session)
+      sessionStorage.setItem('cg_user', user);
+      sessionStorage.setItem('cg_pass', pass);
+      sessionStorage.setItem('cg_method', method);
+
+      // Quick test: ping /send with a harmless request that will 400 due to missing emails, but will test auth
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (method === 'header') {
+          const creds = btoa(`${user}:${pass}`);
+          headers['Authorization'] = 'Basic ' + creds;
+        }
+        const body = method === 'body' ? JSON.stringify({ authUser: user, authPass: pass, emails: "" }) : JSON.stringify({ emails: "" });
+        const resp = await fetch('/send', { method: 'POST', headers, body });
+        if (resp.status === 401) {
+          // auth failed
+          const json = await resp.json().catch(() => ({}));
+          loginError.textContent = 'Authentication failed: ' + (json.message || 'invalid credentials');
+          loginError.style.display = 'block';
+          sessionStorage.removeItem('cg_user');
+          sessionStorage.removeItem('cg_pass');
+          return;
+        }
+        // any other response is fine (we just needed to test credentials)
+        showApp();
+        resultEl.textContent = 'Authentication succeeded — ready to send.';
+      } catch (err) {
+        loginError.textContent = 'Network error while testing credentials: ' + err.message;
+        loginError.style.display = 'block';
+        sessionStorage.removeItem('cg_user');
+        sessionStorage.removeItem('cg_pass');
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('cg_user');
+      sessionStorage.removeItem('cg_pass');
+      sessionStorage.removeItem('cg_method');
+      showLogin();
+      resultEl.textContent = 'Logged out.';
+    });
+
+    // Send / Preview / Clear buttons
+    document.getElementById('sendBtn').addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await sendEmails({ doPreview:false });
+    });
+
+    document.getElementById('previewBtn').addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      await sendEmails({ doPreview:true });
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => { resultEl.textContent = 'Cleared.'; });
+
+    async function sendEmails({ doPreview=false } = {}) {
+      const user = sessionStorage.getItem('cg_user');
+      const pass = sessionStorage.getItem('cg_pass');
+      const methodSelect = document.getElementById('sendMethod');
+      const method = methodSelect.value || (document.getElementById('useHeader').checked ? 'header' : 'body');
+
+      if (!user || !pass) {
+        resultEl.textContent = 'Not logged in. Please login first.';
+        showLogin();
+        return;
+      }
+
+      // Save chosen method to session
+      sessionStorage.setItem('cg_method', method);
+
+      const emailsRaw = document.getElementById('emails').value || '';
+      if (!emailsRaw.trim()) {
+        resultEl.textContent = 'Please paste at least one email address (one per line).';
+        return;
+      }
+      const subject = document.getElementById('subject').value || 'No subject';
+
+      // Build list of addresses
+      const lines = emailsRaw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const addresses = lines.flatMap(l => l.split(/[,;]+/).map(a => a.trim()).filter(Boolean));
+      const unique = Array.from(new Set(addresses));
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const invalid = unique.filter(e => !emailRegex.test(e));
+      if (invalid.length) {
+        resultEl.innerHTML = 'Invalid addresses:\n' + invalid.join('\\n');
+        return;
+      }
+
+      // If preview requested, show the first email built payload (no send)
+      if (doPreview) {
+        const previewTo = unique[0];
+        const previewPayload = {
+          to: previewTo,
+          subject,
+          text: '--- plain text preview ---\\n(Email body is built server-side in this demo)',
+          html: '<div><strong>HTML preview</strong><p>This is a preview. Server builds real content.</p></div>'
+        };
+        resultEl.textContent = 'Previewing first recipient: ' + previewTo + '\\n\\n' + JSON.stringify(previewPayload, null, 2);
+        return;
+      }
+
+      // Build request to /send
+      const headers = { 'Content-Type': 'application/json' };
+      let bodyObj = { emails: unique.join('\\n') , subject }; // server currently ignores subject in body but we include it for future
+      if (method === 'header') {
+        const creds = btoa(`${user}:${pass}`);
+        headers['Authorization'] = 'Basic ' + creds;
+      } else {
+        bodyObj.authUser = user;
+        bodyObj.authPass = pass;
+      }
+
+      resultEl.textContent = 'Sending ' + unique.length + ' emails...';
+      try {
+        const resp = await fetch('/send', { method:'POST', headers, body: JSON.stringify(bodyObj) });
+        const json = await resp.json().catch(()=>({}));
+        if (!resp.ok) {
+          resultEl.innerHTML = `Error ${resp.status}: ${json.message || JSON.stringify(json)}`;
+        } else {
+          resultEl.textContent = JSON.stringify(json, null, 2);
+        }
+      } catch (err) {
+        resultEl.textContent = 'Network error: ' + err.message;
+      }
+    }
+
+    // Keep UI consistent if user toggles auth method radios
+    document.getElementById('useHeader').addEventListener('change', () => {
+      document.getElementById('sendMethod').value = 'header';
+      sessionStorage.setItem('cg_method', 'header');
+    });
+    document.getElementById('useBody').addEventListener('change', () => {
+      document.getElementById('sendMethod').value = 'body';
+      sessionStorage.setItem('cg_method', 'body');
+    });
+
+  </script>
+</body>
+</html>
