@@ -776,28 +776,63 @@
       return iconMap[ext] || '📎';
     }
 
+    // Helper: convert File to Base64 data URL for storage
+    async function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Helper: download file from data URL
+    function downloadFromDataUrl(dataUrl, filename) {
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     function renderAttachments() {
       if (attachedFiles.length === 0) {
         elements.attachmentList.innerHTML = '';
         return;
       }
 
-      elements.attachmentList.innerHTML = attachedFiles.map((file, idx) => `
+      elements.attachmentList.innerHTML = attachedFiles.map((file, idx) => {
+        const fileName = file.name || (file.filename || 'attachment');
+        const fileSize = file.size || 0;
+        const isDataUrl = typeof file === 'object' && file.dataUrl;
+
+        return `
         <div class="attachment-item">
           <div class="attachment-info">
-            <div class="attachment-icon">${getFileIcon(file.name)}</div>
+            <div class="attachment-icon">${getFileIcon(fileName)}</div>
             <div class="attachment-details">
-              <div class="attachment-name">${escapeHtml(file.name)}</div>
-              <div class="attachment-size">${formatFileSize(file.size)}</div>
+              <div class="attachment-name">${escapeHtml(fileName)}</div>
+              <div class="attachment-size">${formatFileSize(fileSize)}</div>
             </div>
           </div>
-          <button class="btn btn-icon" onclick="removeAttachment(${idx})" title="Remove">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          </button>
+          <div style="display: flex; gap: 8px;">
+            ${isDataUrl ? `
+            <button class="btn btn-icon" onclick="downloadAttachment(${idx})" title="Download">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              </svg>
+            </button>
+            ` : ''}
+            <button class="btn btn-icon" onclick="removeAttachment(${idx})" title="Remove">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </button>
+          </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
 
     function handleFiles(files) {
@@ -816,6 +851,13 @@
     window.removeAttachment = function(idx) {
       attachedFiles.splice(idx, 1);
       renderAttachments();
+    };
+
+    window.downloadAttachment = function(idx) {
+      const file = attachedFiles[idx];
+      if (file && file.dataUrl) {
+        downloadFromDataUrl(file.dataUrl, file.name);
+      }
     };
 
     elements.fileUploadArea.addEventListener('click', () => {
@@ -852,14 +894,30 @@
         elements.templateName.value = tpl.name;
         elements.emailSubject.value = tpl.subject;
         elements.htmlEditor.value = tpl.html;
+
+        // Restore attachments from saved template
+        if (tpl.attachments && Array.isArray(tpl.attachments)) {
+          attachedFiles = tpl.attachments.map(att => ({
+            name: att.name,
+            type: att.type,
+            size: att.size,
+            dataUrl: att.dataUrl
+          }));
+          renderAttachments();
+        } else {
+          attachedFiles = [];
+          renderAttachments();
+        }
+
         updatePreview();
       }
     };
 
-    window.useTemplate = function(idx) {
+    window.useTemplate = async function(idx) {
       const templates = getTemplates();
       if (templates[idx]) {
         const tpl = templates[idx];
+        // Ensure attachments are included when using template
         sessionStorage.setItem('cg_selected_template', JSON.stringify(tpl));
         window.location.href = '/';
       }
@@ -875,7 +933,7 @@
       updateTemplateCount();
     };
 
-    elements.saveTemplateBtn.addEventListener('click', () => {
+    elements.saveTemplateBtn.addEventListener('click', async () => {
       const templates = getTemplates();
 
       if (templates.length >= MAX_TEMPLATES) {
@@ -902,12 +960,49 @@
         return;
       }
 
+      // Convert attached File objects to data URLs for storage
+      const attachments = [];
+      for (const file of attachedFiles) {
+        // If already a data URL object (from loaded template), keep as-is
+        if (file.dataUrl) {
+          attachments.push({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            dataUrl: file.dataUrl
+          });
+        } else {
+          // New file, encode to Base64
+          try {
+            const dataUrl = await fileToDataUrl(file);
+            attachments.push({
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              dataUrl: dataUrl
+            });
+          } catch (err) {
+            console.error('Failed to encode file:', file.name, err);
+          }
+        }
+      }
+
       const existingIdx = templates.findIndex(t => t.name === name);
+      const templateData = {
+        name,
+        subject,
+        html,
+        attachments,
+        updatedAt: Date.now()
+      };
+
       if (existingIdx >= 0) {
         if (!confirm('A template with this name already exists. Overwrite it?')) return;
-        templates[existingIdx] = { name, subject, html, updatedAt: Date.now() };
+        templateData.createdAt = templates[existingIdx].createdAt || Date.now();
+        templates[existingIdx] = templateData;
       } else {
-        templates.push({ name, subject, html, createdAt: Date.now(), updatedAt: Date.now() });
+        templateData.createdAt = Date.now();
+        templates.push(templateData);
       }
 
       if (saveTemplates(templates)) {
