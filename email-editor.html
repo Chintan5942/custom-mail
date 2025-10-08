@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <title>Email Editor - Codegrin</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="supabase-url" content="https://vktuyefhvlzkdurbetke.supabase.co" />
+  <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdHV5ZWZodmx6a2R1cmJldGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MzI0MjgsImV4cCI6MjA3NTUwODQyOH0.ORSah_-UIlROOLcXXf9wHjUVyvnpvxXgMgnYGQuU3WM" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -582,9 +584,9 @@
     const MAX_TEMPLATES = 5;
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-    // Initialize Supabase client
-    const supabaseUrl = 'https://jbfgwtpzitlxrphktmek.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiZmd3dHB6aXRseHJwaGt0bWVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mjk3NTQsImV4cCI6MjA3NTUwNTc1NH0.dXHFXjBEl-G__rmD4x1fCcaoIwartfALtu5hPaQcqsM';
+    // Initialize Supabase client - fetch from meta tags injected by server
+    const supabaseUrl = document.querySelector('meta[name="supabase-url"]')?.content || 'https://vktuyefhvlzkdurbetke.supabase.co';
+    const supabaseAnonKey = document.querySelector('meta[name="supabase-anon-key"]')?.content || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdHV5ZWZodmx6a2R1cmJldGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MzI0MjgsImV4cCI6MjA3NTUwODQyOH0.ORSah_-UIlROOLcXXf9wHjUVyvnpvxXgMgnYGQuU3WM';
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     let attachedFiles = [];

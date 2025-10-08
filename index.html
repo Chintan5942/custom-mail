@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <title>Codegrin — Protected Mail Sender</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="supabase-url" content="https://vktuyefhvlzkdurbetke.supabase.co" />
+  <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdHV5ZWZodmx6a2R1cmJldGtlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MzI0MjgsImV4cCI6MjA3NTUwODQyOH0.ORSah_-UIlROOLcXXf9wHjUVyvnpvxXgMgnYGQuU3WM" />
   <style>
     :root { --max-width:900px; --pad:18px; --accent:#0b6efe; }
     body { font-family: Inter, Arial, sans-serif; margin:0; padding:20px; background:#f7f9fc; color:#111; }
@@ -399,6 +401,57 @@
       sessionStorage.setItem('cg_method', 'body');
     });
 
+  </script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    // Initialize Supabase client
+    const supabaseUrl = document.querySelector('meta[name="supabase-url"]')?.content;
+    const supabaseAnonKey = document.querySelector('meta[name="supabase-anon-key"]')?.content;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Fetch template details from Supabase when selected template exists
+    async function loadTemplateFromSupabase() {
+      const selectedTpl = sessionStorage.getItem('cg_selected_template');
+      if (!selectedTpl) return;
+
+      try {
+        const tpl = JSON.parse(selectedTpl);
+
+        // If template has an ID, fetch fresh data from Supabase
+        if (tpl.id) {
+          const { data, error } = await supabase
+            .from('email_templates')
+            .select('*')
+            .eq('id', tpl.id)
+            .maybeSingle();
+
+          if (error) {
+            console.error('Failed to fetch template from Supabase:', error);
+            return;
+          }
+
+          if (data) {
+            // Update session storage with fresh data
+            sessionStorage.setItem('cg_selected_template', JSON.stringify(data));
+
+            // Update UI
+            document.getElementById('subject').value = data.subject;
+            document.getElementById('templateNameDisplay').textContent = data.name;
+            document.getElementById('templateNotice').style.display = 'block';
+
+            console.log('Template loaded from Supabase:', data.name);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading template from Supabase:', e);
+      }
+    }
+
+    // Load template on page load
+    if (sessionStorage.getItem('cg_selected_template')) {
+      loadTemplateFromSupabase();
+    }
   </script>
 </body>
 </html>
