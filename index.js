@@ -8,16 +8,30 @@ import cors from "cors";
 // Path to attachment
 export const pdfPath = path.resolve("./Codegrin-Portfolio.pdf");
 
-// SMTP config (you already have these values in your original code)
+// SMTP config with enhanced connection settings
 const config = {
   smtp: {
     host: "smtp.hostinger.com",
     port: 465,
     secure: true,
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateDelta: 1000,
+    rateLimit: 5,
     auth: {
       user: "info@codegrin.com",
       pass: "Yourcode@2025",
     },
+    tls: {
+      rejectUnauthorized: false,
+      minVersion: 'TLSv1.2'
+    },
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 60000,
+    logger: true,
+    debug: false,
   },
 };
 
@@ -407,7 +421,21 @@ const buildSafeEmail = (to, customTemplate = null, customSubject = null) => {
   };
 };
 
-const transporter = nodemailer.createTransport(config.smtp);
+let transporter = nodemailer.createTransport(config.smtp);
+
+// Test and recreate transporter if needed
+async function ensureTransporterReady() {
+  try {
+    await transporter.verify();
+    console.log('✓ SMTP connection verified');
+    return true;
+  } catch (err) {
+    console.error('✗ SMTP verification failed:', err.message);
+    console.log('Recreating transporter...');
+    transporter = nodemailer.createTransport(config.smtp);
+    return false;
+  }
+}
 const EXPECTED_USER = "info-codegrin";
 const EXPECTED_PASS = "YourCode#2025";
 
@@ -510,28 +538,79 @@ app.post("/send", authMiddleware, async (req, res) => {
       });
     }
 
-    await transporter.verify();
+    // Verify transporter connection with retry
+    console.log('Verifying SMTP connection...');
+    let verifyAttempts = 0;
+    const maxVerifyAttempts = 3;
+
+    while (verifyAttempts < maxVerifyAttempts) {
+      try {
+        await transporter.verify();
+        console.log('✓ SMTP connection verified');
+        break;
+      } catch (verifyError) {
+        verifyAttempts++;
+        console.error(`✗ SMTP verification attempt ${verifyAttempts} failed:`, verifyError.message);
+
+        if (verifyAttempts >= maxVerifyAttempts) {
+          return res.status(503).json({
+            message: "SMTP server connection failed. Please check your network connection and SMTP settings.",
+            error: verifyError.message,
+            hint: "Common causes: firewall blocking port 465, incorrect credentials, or DNS issues"
+          });
+        }
+
+        console.log('Waiting 2 seconds before retry...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Recreate transporter on retry
+        transporter = nodemailer.createTransport(config.smtp);
+      }
+    }
+
     const results = { sent: [], failed: [] };
 
     for (const to of unique) {
       try {
         const mailOptions = buildSafeEmail(to, customTemplate, customSubject);
 
+        console.log(`Sending email to ${to}...`);
         const info = await transporter.sendMail(mailOptions);
-        try { await appendToSentFolder(mailOptions); } catch (e) { console.warn("IMAP append failed:", e.message || e); }
+        console.log(`✓ Sent to ${to}: ${info.messageId}`);
+
+        // Try to append to sent folder (non-blocking)
+        try {
+          await appendToSentFolder(mailOptions);
+          console.log(`✓ Appended to Sent folder for ${to}`);
+        } catch (e) {
+          console.warn("⚠ IMAP append failed:", e.message || e);
+        }
+
         results.sent.push({ to, messageId: info.messageId });
       } catch (err) {
-        console.error("Send failed for", to, err);
+        console.error(`✗ Send failed for ${to}:`, err.message);
         results.failed.push({ to, error: err.message ?? String(err) });
       }
     }
 
-    return res.json({ message: "Done", results });
+    return res.json({
+      message: "Done",
+      results,
+      summary: `Sent: ${results.sent.length}, Failed: ${results.failed.length}`
+    });
   } catch (err) {
     console.error("Server error /send:", err);
-    return res.status(500).json({ message: "Internal server error", error: err.message ?? String(err) });
+    return res.status(500).json({
+      message: "Internal server error",
+      error: err.message ?? String(err),
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
+app.listen(PORT, async () => {
+  console.log(`Server listening on http://localhost:${PORT}`);
+  console.log('Testing SMTP connection...');
+  await ensureTransporterReady();
+});
