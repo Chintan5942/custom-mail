@@ -20,7 +20,7 @@ host: "smtp.hostinger.com",
   maxConnections: 3,
   auth: {
     user: "info@codegrin.com",
-    pass: "Yourcode@2025",
+    pass: "YourFault@2025",
   },
 });
 
@@ -28,7 +28,7 @@ host: "smtp.hostinger.com",
 const imapConfig = {
   imap: {
     user: "info@codegrin.com",
-    password: "Yourcode@2025",
+    password: "YourFault@2025",
     host: "imap.hostinger.com",
     port: 993,
     tls: true,
