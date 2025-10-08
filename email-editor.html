@@ -576,10 +576,16 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
     const MAX_TEMPLATES = 5;
-    const STORAGE_KEY = 'cg_email_templates';
     const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    // Initialize Supabase client
+    const supabaseUrl = 'https://0ec90b57d6e95fcbda19832f.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJib2x0IiwicmVmIjoiMGVjOTBiNTdkNmU5NWZjYmRhMTk4MzJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4ODE1NzQsImV4cCI6MTc1ODg4MTU3NH0.9I8-U0x86Ak8t2DGaIk0HfvTSLsAyzdnz-Nw00mMkKw';
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     let attachedFiles = [];
 
@@ -667,19 +673,29 @@
 
     elements.htmlEditor.value = defaultTemplate;
 
-    function getTemplates() {
+    async function getTemplates() {
       try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        return stored ? JSON.parse(stored) : [];
+        const { data, error } = await supabase
+          .from('email_templates')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        return data || [];
       } catch (e) {
         console.error('Failed to load templates:', e);
         return [];
       }
     }
 
-    function saveTemplates(templates) {
+    async function saveTemplate(template) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+        const { data, error } = await supabase
+          .from('email_templates')
+          .upsert(template, { onConflict: 'id' })
+          .select();
+
+        if (error) throw error;
         return true;
       } catch (e) {
         alert('Failed to save template: ' + e.message);
@@ -687,13 +703,28 @@
       }
     }
 
-    function updateTemplateCount() {
-      const templates = getTemplates();
+    async function deleteTemplateById(id) {
+      try {
+        const { error } = await supabase
+          .from('email_templates')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        return true;
+      } catch (e) {
+        alert('Failed to delete template: ' + e.message);
+        return false;
+      }
+    }
+
+    async function updateTemplateCount() {
+      const templates = await getTemplates();
       elements.templateCount.textContent = `${templates.length}/${MAX_TEMPLATES} Templates`;
     }
 
-    function renderTemplateList() {
-      const templates = getTemplates();
+    async function renderTemplateList() {
+      const templates = await getTemplates();
 
       if (templates.length === 0) {
         elements.templateList.innerHTML = `
@@ -707,16 +738,16 @@
         return;
       }
 
-      elements.templateList.innerHTML = templates.map((tpl, idx) => `
+      elements.templateList.innerHTML = templates.map((tpl) => `
         <div class="template-card">
           <div class="template-info">
             <h4>${escapeHtml(tpl.name)}</h4>
             <p>${escapeHtml(tpl.subject)}</p>
           </div>
           <div class="template-actions">
-            <button class="btn btn-secondary" onclick="loadTemplate(${idx})">Load</button>
-            <button class="btn btn-primary" onclick="useTemplate(${idx})">Use</button>
-            <button class="btn btn-danger" onclick="deleteTemplate(${idx})">Delete</button>
+            <button class="btn btn-secondary" onclick="window.loadTemplateById('${tpl.id}')">Load</button>
+            <button class="btn btn-primary" onclick="window.useTemplateById('${tpl.id}')">Use</button>
+            <button class="btn btn-danger" onclick="window.deleteTemplateById('${tpl.id}')">Delete</button>
           </div>
         </div>
       `).join('');
@@ -887,10 +918,11 @@
       }
     });
 
-    window.loadTemplate = function(idx) {
-      const templates = getTemplates();
-      if (templates[idx]) {
-        const tpl = templates[idx];
+    window.loadTemplateById = async function(id) {
+      const templates = await getTemplates();
+      const tpl = templates.find(t => t.id === id);
+
+      if (tpl) {
         elements.templateName.value = tpl.name;
         elements.emailSubject.value = tpl.subject;
         elements.htmlEditor.value = tpl.html;
@@ -913,33 +945,28 @@
       }
     };
 
-    window.useTemplate = async function(idx) {
-      const templates = getTemplates();
-      if (templates[idx]) {
-        const tpl = templates[idx];
+    window.useTemplateById = async function(id) {
+      const templates = await getTemplates();
+      const tpl = templates.find(t => t.id === id);
+
+      if (tpl) {
         // Ensure attachments are included when using template
         sessionStorage.setItem('cg_selected_template', JSON.stringify(tpl));
         window.location.href = '/';
       }
     };
 
-    window.deleteTemplate = function(idx) {
+    window.deleteTemplateById = async function(id) {
       if (!confirm('Are you sure you want to delete this template?')) return;
 
-      const templates = getTemplates();
-      templates.splice(idx, 1);
-      saveTemplates(templates);
-      renderTemplateList();
-      updateTemplateCount();
+      if (await deleteTemplateById(id)) {
+        await renderTemplateList();
+        await updateTemplateCount();
+      }
     };
 
     elements.saveTemplateBtn.addEventListener('click', async () => {
-      const templates = getTemplates();
-
-      if (templates.length >= MAX_TEMPLATES) {
-        alert(`Maximum of ${MAX_TEMPLATES} templates reached. Please delete one before saving a new template.`);
-        return;
-      }
+      const templates = await getTemplates();
 
       const name = elements.templateName.value.trim();
       const subject = elements.emailSubject.value.trim();
@@ -957,6 +984,14 @@
 
       if (!html) {
         alert('Please enter HTML content.');
+        return;
+      }
+
+      // Check if updating existing template
+      const existingTemplate = templates.find(t => t.name === name);
+
+      if (!existingTemplate && templates.length >= MAX_TEMPLATES) {
+        alert(`Maximum of ${MAX_TEMPLATES} templates reached. Please delete one before saving a new template.`);
         return;
       }
 
@@ -987,25 +1022,25 @@
         }
       }
 
-      const existingIdx = templates.findIndex(t => t.name === name);
       const templateData = {
         name,
         subject,
         html,
-        attachments,
-        updatedAt: Date.now()
+        attachments
       };
 
-      if (existingIdx >= 0) {
+      if (existingTemplate) {
         if (!confirm('A template with this name already exists. Overwrite it?')) return;
-        templateData.createdAt = templates[existingIdx].createdAt || Date.now();
-        templates[existingIdx] = templateData;
+        templateData.id = existingTemplate.id;
+        templateData.created_at = existingTemplate.created_at;
+        templateData.updated_at = new Date().toISOString();
       } else {
-        templateData.createdAt = Date.now();
-        templates.push(templateData);
+        const now = new Date().toISOString();
+        templateData.created_at = now;
+        templateData.updated_at = now;
       }
 
-      if (saveTemplates(templates)) {
+      if (await saveTemplate(templateData)) {
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-success';
         alertDiv.innerHTML = `
@@ -1017,8 +1052,8 @@
         document.querySelector('.editor-content').insertBefore(alertDiv, document.querySelector('.editor-content').firstChild);
         setTimeout(() => alertDiv.remove(), 3000);
 
-        renderTemplateList();
-        updateTemplateCount();
+        await renderTemplateList();
+        await updateTemplateCount();
       }
     });
 
@@ -1047,9 +1082,12 @@
 
     elements.htmlEditor.addEventListener('input', updatePreview);
 
-    updatePreview();
-    updateTemplateCount();
-    renderTemplateList();
+    // Initialize
+    (async () => {
+      updatePreview();
+      await updateTemplateCount();
+      await renderTemplateList();
+    })();
   </script>
 </body>
 </html>
