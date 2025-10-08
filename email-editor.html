@@ -2,155 +2,602 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Email Template Editor - Codegrin</title>
+  <title>Email Editor - Codegrin</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root {  --pad:18px; --accent:#0b6efe; }
-    * { box-sizing: border-box; }
-    body { font-family: Inter, Arial, sans-serif; margin:0; padding:20px; background:#f7f9fc; color:#111; }
-    .container { max-width: var(--max-width); margin:24px auto; background:#fff; border-radius:10px; box-shadow:0 6px 20px rgba(12,20,40,0.06); padding:24px; }
-    h1 { margin:0 0 8px 0; font-size:20px; color:var(--accent); }
-    h2 { margin:20px 0 12px 0; font-size:16px; color:#334; border-bottom:2px solid #e3e7ee; padding-bottom:6px; }
-    p.lead { margin:0 0 18px 0; color:#556; font-size:14px; }
-    .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-    .btn { background:var(--accent); color:#fff; padding:10px 16px; border-radius:8px; border:none; cursor:pointer; font-weight:600; font-size:14px; transition:background 0.2s; }
-    .btn:hover { background:#0956d1; }
-    .btn.secondary { background:#eef3ff; color:var(--accent); }
-    .btn.secondary:hover { background:#dce8ff; }
-    .btn.danger { background:#dc3545; }
-    .btn.danger:hover { background:#bb2d3b; }
-    .btn:disabled { opacity:0.5; cursor:not-allowed; }
-    label { display:block; font-size:13px; color:#334; margin-bottom:6px; font-weight:600; }
-    input[type="text"], textarea { width:100%; padding:10px 12px; border:1px solid #e3e7ee; border-radius:8px; font-size:14px; background:#fff; }
-    textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; resize:vertical; }
-    .form-group { margin-bottom:16px; }
-    .editor-layout { display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:20px; }
-    .editor-panel { border:1px solid #e3e7ee; border-radius:8px; padding:16px; background:#fafbfc; }
-    .preview-panel { border:1px solid #e3e7ee; border-radius:8px; padding:16px; background:#fff; overflow:auto; max-height:600px; }
-    .preview-content { border:1px solid #dee2e6; padding:20px; background:#fff; }
-    .toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
-    .toolbar button { padding:6px 12px; font-size:12px; }
-    .placeholder-tag { display:inline-block; background:#e3f2fd; color:#1976d2; padding:2px 6px; border-radius:4px; font-family: monospace; font-size:12px; margin:0 2px; }
-    .template-list { display:grid; gap:10px; margin-top:12px; }
-    .template-item { display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid #e3e7ee; border-radius:6px; background:#fff; }
-    .template-item:hover { background:#f8f9fa; }
-    .template-name { font-weight:600; color:#334; }
-    .template-subject { font-size:12px; color:#667; margin-top:2px; }
-    .template-actions { display:flex; gap:6px; }
-    .template-actions button { padding:6px 10px; font-size:12px; }
-    .alert { padding:12px; border-radius:6px; margin-bottom:16px; font-size:14px; }
-    .alert-info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
-    .alert-warning { background:#fff3cd; color:#856404; border:1px solid #ffeaa7; }
-    .alert-success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-    .placeholder-info { background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:12px; font-size:12px; color:#556; }
-    .placeholder-info code { background:#e3e7ee; padding:2px 6px; border-radius:3px; font-family:monospace; }
-    .hidden { display:none; }
-    .tabs { display:flex; gap:4px; margin-bottom:16px; border-bottom:2px solid #e3e7ee; }
-    .tab { padding:10px 16px; cursor:pointer; border:none; background:none; color:#667; font-weight:600; border-bottom:2px solid transparent; margin-bottom:-2px; }
-    .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-    .tab:hover { color:#334; }
-    .top-actions { display:flex; gap:8px; }
-    footer { margin-top:18px; font-size:12px; color:#889; text-align:center; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary: #64748b;
+      --bg-light: #f8fafc;
+      --bg-white: #ffffff;
+      --border: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .fullscreen-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .header {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      z-index: 10;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: var(--bg-light);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-white);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-icon {
+      padding: 8px;
+      background: transparent;
+      color: var(--secondary);
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-light);
+      color: var(--primary);
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      height: calc(100vh - 69px);
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-white);
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-light);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--bg-light);
+    }
+
+    .editor-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .preview-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .preview-frame {
+      background: var(--bg-white);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      min-height: 100%;
+      padding: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-textarea {
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+      min-height: 300px;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--bg-light);
+      border-radius: 8px;
+    }
+
+    .toolbar-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-white);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toolbar-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .file-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      background: var(--bg-light);
+    }
+
+    .file-upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.05);
+    }
+
+    .file-upload-area.drag-over {
+      border-color: var(--primary);
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .attachment-list {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .attachment-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .attachment-item:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .attachment-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .attachment-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-light);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .attachment-details {
+      flex: 1;
+    }
+
+    .attachment-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .attachment-size {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: flex;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #93c5fd;
+    }
+
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .templates-section {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 2px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .template-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .template-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .template-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .template-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .template-info p {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .template-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .template-actions .btn {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    @media (max-width: 1024px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-panel {
+        display: none;
+      }
+
+      .header-actions {
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--primary);
+      color: white;
+    }
+
+    .preview-toolbar {
+      padding: 12px 24px;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div>
-        <h1>Email Template Editor</h1>
-        <p class="lead">Create and manage custom email templates with live preview</p>
+  <div class="fullscreen-container">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
+          Email Editor
+        </div>
+        <span class="badge" id="templateCount">0/5 Templates</span>
       </div>
-      <div class="top-actions">
-        <button id="backBtn" class="btn secondary">Back to Mail Sender</button>
+      <div class="header-actions">
+        <button id="previewToggleBtn" class="btn btn-secondary">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+          </svg>
+          Preview
+        </button>
+        <button id="saveTemplateBtn" class="btn btn-primary">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+          </svg>
+          Save Template
+        </button>
+        <button id="backToMailer" class="btn btn-secondary">Back to Mailer</button>
       </div>
-    </div>
+    </header>
 
-    <div class="tabs">
-      <button class="tab active" data-tab="editor">Template Editor</button>
-      <button class="tab" data-tab="templates">Saved Templates (0/5)</button>
-    </div>
-
-    <div id="editorTab" class="tab-content">
-      <div class="alert alert-info">
-        Use placeholders like <code>{{username}}</code>, <code>{{date}}</code>, or <code>{{company}}</code> in your template. These will be replaced when sending emails.
-      </div>
-
-      <div class="form-group">
-        <label for="templateName">Template Name</label>
-        <input id="templateName" type="text" placeholder="My Custom Template" />
-      </div>
-
-      <div class="form-group">
-        <label for="emailSubject">Email Subject</label>
-        <input id="emailSubject" type="text" placeholder="Enter email subject" value="Proposal for Development Partnership – Codegrin Technologies" />
-      </div>
-
-      <div class="editor-layout">
-        <div class="editor-panel">
-          <h2>HTML Editor</h2>
-
-          <div class="placeholder-info">
-            Available placeholders: <code>{{username}}</code> <code>{{email}}</code> <code>{{date}}</code> <code>{{company}}</code> <code>{{customField1}}</code> <code>{{customField2}}</code>
+    <div class="main-content">
+      <div class="editor-panel">
+        <div class="panel-header">Compose Email</div>
+        <div class="editor-content">
+          <div class="alert alert-info">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <div>
+              Use placeholders like <code>{{username}}</code>, <code>{{email}}</code>, <code>{{date}}</code>, <code>{{company}}</code> in your template.
+            </div>
           </div>
 
-          <div class="toolbar">
-            <button class="btn secondary" data-insert="<strong>Bold Text</strong>">Bold</button>
-            <button class="btn secondary" data-insert="<em>Italic Text</em>">Italic</button>
-            <button class="btn secondary" data-insert="<h2>Heading</h2>">Heading</button>
-            <button class="btn secondary" data-insert="<a href='https://example.com'>Link</a>">Link</button>
-            <button class="btn secondary" data-insert="<ul><li>Item 1</li><li>Item 2</li></ul>">List</button>
-            <button class="btn secondary" data-insert="{{username}}">{{username}}</button>
-            <button class="btn secondary" data-insert="{{date}}">{{date}}</button>
-            <button class="btn secondary" data-insert="{{company}}">{{company}}</button>
+          <div class="form-group">
+            <label class="form-label" for="templateName">Template Name</label>
+            <input class="form-input" id="templateName" type="text" placeholder="e.g., Partnership Proposal, Welcome Email" />
           </div>
 
-          <textarea id="htmlEditor" rows="20" placeholder="Enter your HTML content here..."></textarea>
+          <div class="form-group">
+            <label class="form-label" for="emailSubject">Email Subject</label>
+            <input class="form-input" id="emailSubject" type="text" placeholder="Enter email subject" value="Proposal for Development Partnership – Codegrin Technologies" />
+          </div>
 
-          <div style="margin-top:12px; display:flex; gap:8px;">
-            <button id="previewBtn" class="btn">Update Preview</button>
-            <button id="saveTemplateBtn" class="btn secondary">Save Template</button>
-            <button id="clearEditorBtn" class="btn secondary">Clear</button>
+          <div class="form-group">
+            <label class="form-label">HTML Editor</label>
+            <div class="toolbar">
+              <button class="toolbar-btn" data-insert="<strong>Bold Text</strong>">Bold</button>
+              <button class="toolbar-btn" data-insert="<em>Italic Text</em>">Italic</button>
+              <button class="toolbar-btn" data-insert="<h2>Heading</h2>">Heading</button>
+              <button class="toolbar-btn" data-insert="<a href='https://example.com'>Link</a>">Link</button>
+              <button class="toolbar-btn" data-insert="<ul><li>Item 1</li><li>Item 2</li></ul>">List</button>
+              <button class="toolbar-btn" data-insert="{{username}}">{{username}}</button>
+              <button class="toolbar-btn" data-insert="{{date}}">{{date}}</button>
+              <button class="toolbar-btn" data-insert="{{company}}">{{company}}</button>
+            </div>
+            <textarea class="form-textarea" id="htmlEditor" placeholder="Enter your HTML content here..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">File Attachments (Optional)</label>
+            <div class="file-upload-area" id="fileUploadArea">
+              <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24" style="opacity: 0.3;">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+              </svg>
+              <p style="margin-top: 12px; color: var(--text-secondary); font-size: 14px;">
+                <strong>Click to upload</strong> or drag and drop files here
+              </p>
+              <p style="margin-top: 4px; color: var(--text-secondary); font-size: 12px;">
+                PDF, images, documents (max 10MB per file)
+              </p>
+            </div>
+            <input type="file" id="fileInput" class="file-input" multiple />
+            <div class="attachment-list" id="attachmentList"></div>
+          </div>
+
+          <div class="templates-section">
+            <div class="section-title">Saved Templates (5 max)</div>
+            <div class="template-grid" id="templateList">
+              <div class="empty-state">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <p>No saved templates yet</p>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="preview-panel">
-          <h2>Live Preview</h2>
-          <div class="preview-content" id="previewContent">
-            <p style="color:#888;">Your email preview will appear here...</p>
+      <div class="preview-panel" id="previewPanel">
+        <div class="panel-header">Live Preview</div>
+        <div class="preview-toolbar">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          Sample data applied to placeholders
+        </div>
+        <div class="preview-content">
+          <div class="preview-frame" id="previewFrame">
+            <p style="color: #94a3b8; text-align: center; padding: 48px;">
+              Your email preview will appear here
+            </p>
           </div>
         </div>
       </div>
     </div>
-
-    <div id="templatesTab" class="tab-content hidden">
-      <div class="alert alert-warning" id="templateLimitWarning" style="display:none;">
-        You've reached the maximum of 5 saved templates. Delete one to save a new template.
-      </div>
-
-      <div class="template-list" id="templateList">
-        <p style="color:#888; text-align:center; padding:40px;">No saved templates yet. Create one in the editor!</p>
-      </div>
-    </div>
-
-    <footer>
-      <div>Templates are stored locally in your browser. Maximum 5 templates per user.</div>
-    </footer>
   </div>
 
   <script>
     const MAX_TEMPLATES = 5;
     const STORAGE_KEY = 'cg_email_templates';
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-    const tabButtons = document.querySelectorAll('.tab');
-    const editorTab = document.getElementById('editorTab');
-    const templatesTab = document.getElementById('templatesTab');
-    const templateName = document.getElementById('templateName');
-    const emailSubject = document.getElementById('emailSubject');
-    const htmlEditor = document.getElementById('htmlEditor');
-    const previewContent = document.getElementById('previewContent');
-    const templateList = document.getElementById('templateList');
-    const templateLimitWarning = document.getElementById('templateLimitWarning');
-    const backBtn = document.getElementById('backBtn');
+    let attachedFiles = [];
+
+    const elements = {
+      templateName: document.getElementById('templateName'),
+      emailSubject: document.getElementById('emailSubject'),
+      htmlEditor: document.getElementById('htmlEditor'),
+      previewFrame: document.getElementById('previewFrame'),
+      previewPanel: document.getElementById('previewPanel'),
+      fileUploadArea: document.getElementById('fileUploadArea'),
+      fileInput: document.getElementById('fileInput'),
+      attachmentList: document.getElementById('attachmentList'),
+      templateList: document.getElementById('templateList'),
+      templateCount: document.getElementById('templateCount'),
+      saveTemplateBtn: document.getElementById('saveTemplateBtn'),
+      previewToggleBtn: document.getElementById('previewToggleBtn'),
+      backToMailer: document.getElementById('backToMailer')
+    };
 
     const defaultTemplate = `<!DOCTYPE html>
 <html lang="en">
@@ -171,11 +618,11 @@
             background-color: #f8f9fa;
             padding: 20px;
             text-align: center;
-            border-bottom: 3px solid #007bff;
+            border-bottom: 3px solid #2563eb;
             margin-bottom: 30px;
         }
         h1 {
-            color: #007bff;
+            color: #2563eb;
             font-size: 24px;
             margin-bottom: 10px;
         }
@@ -191,7 +638,7 @@
             border-top: 1px solid #dee2e6;
         }
         a {
-            color: #007bff;
+            color: #2563eb;
             text-decoration: none;
         }
     </style>
@@ -219,7 +666,7 @@
 </body>
 </html>`;
 
-    htmlEditor.value = defaultTemplate;
+    elements.htmlEditor.value = defaultTemplate;
 
     function getTemplates() {
       try {
@@ -243,29 +690,34 @@
 
     function updateTemplateCount() {
       const templates = getTemplates();
-      const tab = document.querySelector('[data-tab="templates"]');
-      tab.textContent = `Saved Templates (${templates.length}/${MAX_TEMPLATES})`;
-      templateLimitWarning.style.display = templates.length >= MAX_TEMPLATES ? 'block' : 'none';
+      elements.templateCount.textContent = `${templates.length}/${MAX_TEMPLATES} Templates`;
     }
 
     function renderTemplateList() {
       const templates = getTemplates();
 
       if (templates.length === 0) {
-        templateList.innerHTML = '<p style="color:#888; text-align:center; padding:40px;">No saved templates yet. Create one in the editor!</p>';
+        elements.templateList.innerHTML = `
+          <div class="empty-state">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            <p>No saved templates yet</p>
+          </div>
+        `;
         return;
       }
 
-      templateList.innerHTML = templates.map((tpl, idx) => `
-        <div class="template-item">
-          <div>
-            <div class="template-name">${escapeHtml(tpl.name)}</div>
-            <div class="template-subject">${escapeHtml(tpl.subject)}</div>
+      elements.templateList.innerHTML = templates.map((tpl, idx) => `
+        <div class="template-card">
+          <div class="template-info">
+            <h4>${escapeHtml(tpl.name)}</h4>
+            <p>${escapeHtml(tpl.subject)}</p>
           </div>
           <div class="template-actions">
-            <button class="btn secondary" onclick="loadTemplate(${idx})">Load</button>
-            <button class="btn secondary" onclick="useTemplate(${idx})">Use</button>
-            <button class="btn danger" onclick="deleteTemplate(${idx})">Delete</button>
+            <button class="btn btn-secondary" onclick="loadTemplate(${idx})">Load</button>
+            <button class="btn btn-primary" onclick="useTemplate(${idx})">Use</button>
+            <button class="btn btn-danger" onclick="deleteTemplate(${idx})">Delete</button>
           </div>
         </div>
       `).join('');
@@ -287,7 +739,7 @@
     }
 
     function updatePreview() {
-      const html = htmlEditor.value;
+      const html = elements.htmlEditor.value;
       const sampleData = {
         username: 'John Doe',
         email: 'john@example.com',
@@ -298,22 +750,110 @@
       };
 
       const rendered = replacePlaceholders(html, sampleData);
-      previewContent.innerHTML = rendered;
+      elements.previewFrame.innerHTML = rendered;
     }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      const iconMap = {
+        'pdf': '📄',
+        'doc': '📝',
+        'docx': '📝',
+        'jpg': '🖼️',
+        'jpeg': '🖼️',
+        'png': '🖼️',
+        'gif': '🖼️',
+        'zip': '📦',
+        'txt': '📃'
+      };
+      return iconMap[ext] || '📎';
+    }
+
+    function renderAttachments() {
+      if (attachedFiles.length === 0) {
+        elements.attachmentList.innerHTML = '';
+        return;
+      }
+
+      elements.attachmentList.innerHTML = attachedFiles.map((file, idx) => `
+        <div class="attachment-item">
+          <div class="attachment-info">
+            <div class="attachment-icon">${getFileIcon(file.name)}</div>
+            <div class="attachment-details">
+              <div class="attachment-name">${escapeHtml(file.name)}</div>
+              <div class="attachment-size">${formatFileSize(file.size)}</div>
+            </div>
+          </div>
+          <button class="btn btn-icon" onclick="removeAttachment(${idx})" title="Remove">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleFiles(files) {
+      const validFiles = Array.from(files).filter(file => {
+        if (file.size > MAX_FILE_SIZE) {
+          alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+          return false;
+        }
+        return true;
+      });
+
+      attachedFiles = [...attachedFiles, ...validFiles];
+      renderAttachments();
+    }
+
+    window.removeAttachment = function(idx) {
+      attachedFiles.splice(idx, 1);
+      renderAttachments();
+    };
+
+    elements.fileUploadArea.addEventListener('click', () => {
+      elements.fileInput.click();
+    });
+
+    elements.fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFiles(e.target.files);
+      }
+    });
+
+    elements.fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      elements.fileUploadArea.classList.add('drag-over');
+    });
+
+    elements.fileUploadArea.addEventListener('dragleave', () => {
+      elements.fileUploadArea.classList.remove('drag-over');
+    });
+
+    elements.fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      elements.fileUploadArea.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
 
     window.loadTemplate = function(idx) {
       const templates = getTemplates();
       if (templates[idx]) {
         const tpl = templates[idx];
-        templateName.value = tpl.name;
-        emailSubject.value = tpl.subject;
-        htmlEditor.value = tpl.html;
+        elements.templateName.value = tpl.name;
+        elements.emailSubject.value = tpl.subject;
+        elements.htmlEditor.value = tpl.html;
         updatePreview();
-
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabButtons[0].classList.add('active');
-        editorTab.classList.remove('hidden');
-        templatesTab.classList.add('hidden');
       }
     };
 
@@ -336,9 +876,7 @@
       updateTemplateCount();
     };
 
-    document.getElementById('previewBtn').addEventListener('click', updatePreview);
-
-    document.getElementById('saveTemplateBtn').addEventListener('click', () => {
+    elements.saveTemplateBtn.addEventListener('click', () => {
       const templates = getTemplates();
 
       if (templates.length >= MAX_TEMPLATES) {
@@ -346,9 +884,9 @@
         return;
       }
 
-      const name = templateName.value.trim();
-      const subject = emailSubject.value.trim();
-      const html = htmlEditor.value.trim();
+      const name = elements.templateName.value.trim();
+      const subject = elements.emailSubject.value.trim();
+      const html = elements.htmlEditor.value.trim();
 
       if (!name) {
         alert('Please enter a template name.');
@@ -374,57 +912,50 @@
       }
 
       if (saveTemplates(templates)) {
-        alert('Template saved successfully!');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success';
+        alertDiv.innerHTML = `
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <div>Template saved successfully!</div>
+        `;
+        document.querySelector('.editor-content').insertBefore(alertDiv, document.querySelector('.editor-content').firstChild);
+        setTimeout(() => alertDiv.remove(), 3000);
+
         renderTemplateList();
         updateTemplateCount();
       }
     });
 
-    document.getElementById('clearEditorBtn').addEventListener('click', () => {
-      if (confirm('Clear the editor? This will not delete saved templates.')) {
-        templateName.value = '';
-        emailSubject.value = '';
-        htmlEditor.value = defaultTemplate;
-        updatePreview();
-      }
+    elements.previewToggleBtn.addEventListener('click', () => {
+      elements.previewPanel.style.display =
+        elements.previewPanel.style.display === 'none' ? 'flex' : 'none';
+      updatePreview();
     });
 
-    document.querySelectorAll('.toolbar button[data-insert]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const insert = btn.getAttribute('data-insert');
-        const start = htmlEditor.selectionStart;
-        const end = htmlEditor.selectionEnd;
-        const text = htmlEditor.value;
-        htmlEditor.value = text.substring(0, start) + insert + text.substring(end);
-        htmlEditor.focus();
-        htmlEditor.selectionStart = htmlEditor.selectionEnd = start + insert.length;
-      });
-    });
-
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.getAttribute('data-tab');
-
-        tabButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        if (tab === 'editor') {
-          editorTab.classList.remove('hidden');
-          templatesTab.classList.add('hidden');
-        } else if (tab === 'templates') {
-          editorTab.classList.add('hidden');
-          templatesTab.classList.remove('hidden');
-          renderTemplateList();
-        }
-      });
-    });
-
-    backBtn.addEventListener('click', () => {
+    elements.backToMailer.addEventListener('click', () => {
       window.location.href = '/';
     });
 
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const insert = btn.getAttribute('data-insert');
+        const start = elements.htmlEditor.selectionStart;
+        const end = elements.htmlEditor.selectionEnd;
+        const text = elements.htmlEditor.value;
+        elements.htmlEditor.value = text.substring(0, start) + insert + text.substring(end);
+        elements.htmlEditor.focus();
+        elements.htmlEditor.selectionStart = elements.htmlEditor.selectionEnd = start + insert.length;
+        updatePreview();
+      });
+    });
+
+    elements.htmlEditor.addEventListener('input', updatePreview);
+
     updatePreview();
     updateTemplateCount();
+    renderTemplateList();
   </script>
 </body>
 </html>
