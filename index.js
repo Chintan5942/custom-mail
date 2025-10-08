@@ -92,15 +92,49 @@ async function appendToSentFolder(mailOptions) {
   }
 }
 
+// Helper function to replace placeholders in template
+function replacePlaceholders(html, to) {
+  const placeholders = {
+    username: to.split('@')[0],
+    email: to,
+    date: new Date().toLocaleDateString(),
+    company: 'Your Company',
+    customField1: '',
+    customField2: ''
+  };
+
+  let result = html;
+  for (const [key, value] of Object.entries(placeholders)) {
+    const regex = new RegExp(`{{${key}}}`, 'g');
+    result = result.replace(regex, value);
+  }
+  return result;
+}
+
 // Reuse your buildSafeEmail, accept "to" dynamically
-const buildSafeEmail = (to) => {
-  return {
+const buildSafeEmail = (to, customTemplate = null, customSubject = null) => {
+  const baseOptions = {
     from: {
       name: "Chintan Rabadiya",
       address: "info@codegrin.com",
     },
     to: to,
-    subject: "Proposal for Development Partnership – Codegrin Technologies",
+    subject: customSubject || "Proposal for Development Partnership – Codegrin Technologies",
+  };
+
+  // If custom template is provided, use it instead of default
+  if (customTemplate) {
+    return {
+      ...baseOptions,
+      html: replacePlaceholders(customTemplate, to),
+      text: 'Please view this email in an HTML-compatible email client.',
+      attachments: []
+    };
+  }
+
+  // Default template
+  return {
+    ...baseOptions,
      text: `Hello,
     
         I hope this message finds you well.
@@ -449,6 +483,10 @@ app.post("/send", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Missing or empty 'emails' field. Paste one address per line." });
     }
 
+    // Get custom template if provided
+    const customTemplate = req.body.customTemplate || null;
+    const customSubject = req.body.subject || null;
+
     // Normalize first to convert escaped/newline-literal sequences into actual newlines
     const normalized = normalizeIncomingEmails(rawInput);
 
@@ -477,7 +515,7 @@ app.post("/send", authMiddleware, async (req, res) => {
 
     for (const to of unique) {
       try {
-        const mailOptions = buildSafeEmail(to);
+        const mailOptions = buildSafeEmail(to, customTemplate, customSubject);
 
         const info = await transporter.sendMail(mailOptions);
         try { await appendToSentFolder(mailOptions); } catch (e) { console.warn("IMAP append failed:", e.message || e); }
