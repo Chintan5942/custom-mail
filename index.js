@@ -141,7 +141,7 @@ function replacePlaceholders(html, to) {
 }
 
 // ----------------- Build email options -----------------
-const buildSafeEmail = (to, customTemplate = null, customSubject = null) => {
+const buildSafeEmail = (to, customTemplate = null, customSubject = null, customAttachments = null) => {
   const baseOptions = {
     from: {
       name: "Chintan Rabadiya",
@@ -152,11 +152,29 @@ const buildSafeEmail = (to, customTemplate = null, customSubject = null) => {
   };
 
   if (customTemplate) {
+    // Convert Base64 data URLs to nodemailer attachment format
+    const attachments = [];
+    if (customAttachments && Array.isArray(customAttachments)) {
+      for (const att of customAttachments) {
+        if (att.dataUrl && att.name) {
+          // Extract Base64 data from data URL (format: data:mime/type;base64,xxxxx)
+          const matches = att.dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+          if (matches) {
+            attachments.push({
+              filename: att.name,
+              content: Buffer.from(matches[2], 'base64'),
+              contentType: att.type || matches[1],
+            });
+          }
+        }
+      }
+    }
+
     return {
       ...baseOptions,
       html: replacePlaceholders(customTemplate, to),
       text: "Please view this email in an HTML-compatible email client.",
-      attachments: [],
+      attachments: attachments,
     };
   }
 
@@ -355,6 +373,7 @@ app.post("/send", authMiddleware, async (req, res) => {
 
     const customTemplate = req.body.customTemplate || null;
     const customSubject = req.body.subject || null;
+    const customAttachments = req.body.attachments || null;
 
     const normalized = normalizeIncomingEmails(rawInput);
     const lines = normalized.split(/\n+/).map((l) => l.trim()).filter(Boolean);
@@ -387,7 +406,7 @@ app.post("/send", authMiddleware, async (req, res) => {
 
     for (const to of unique) {
       try {
-        const mailOptions = buildSafeEmail(to, customTemplate, customSubject);
+        const mailOptions = buildSafeEmail(to, customTemplate, customSubject, customAttachments);
 
         console.log(`Sending email to ${to}...`);
         const info = await transporter.sendMail(mailOptions);

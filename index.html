@@ -358,6 +358,10 @@
           const tpl = JSON.parse(selectedTpl);
           bodyObj.customTemplate = tpl.html;
           bodyObj.subject = tpl.subject;
+          // Include attachments if present
+          if (tpl.attachments && Array.isArray(tpl.attachments) && tpl.attachments.length > 0) {
+            bodyObj.attachments = tpl.attachments;
+          }
         } catch (e) {
           console.error('Template error:', e);
         }
