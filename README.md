@@ -10,7 +10,7 @@ A secure email sending application with a dynamic HTML template editor and previ
 - **Live Preview**: See how your emails look before sending
 - **Template Management**: Save up to 5 templates per user (stored in browser local storage)
 - **Placeholder Support**: Use dynamic placeholders like `{{username}}`, `{{email}}`, `{{date}}`, etc.
-- **IMAP Integration**: Automatically saves sent emails to your Sent folder
+- **IMAP Integration**: Automatically saves sent emails to your Sent folder E-mail@2025
 
 ## Getting Started
 
