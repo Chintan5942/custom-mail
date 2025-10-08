@@ -311,18 +311,47 @@
         return;
       }
 
+      // Fetch template from Supabase if selected
+      let templateData = null;
+      const selectedTplStr = sessionStorage.getItem('cg_selected_template');
+      if (selectedTplStr) {
+        try {
+          const selectedTpl = JSON.parse(selectedTplStr);
+          if (selectedTpl.id && window.supabaseClient) {
+            // Fetch fresh template data from Supabase
+            const { data, error } = await window.supabaseClient
+              .from('email_templates')
+              .select('*')
+              .eq('id', selectedTpl.id)
+              .maybeSingle();
+
+            if (error) {
+              console.error('Failed to fetch template from Supabase:', error);
+              resultEl.textContent = 'Error: Failed to load template from database. ' + error.message;
+              return;
+            }
+
+            if (data) {
+              templateData = data;
+              console.log('Template fetched from Supabase:', templateData.name);
+            }
+          } else {
+            // Fallback to sessionStorage data if no ID or Supabase unavailable
+            templateData = selectedTpl;
+          }
+        } catch (e) {
+          console.error('Template parsing error:', e);
+        }
+      }
+
       // If preview requested, show the first email built payload (no send)
       if (doPreview) {
         const previewTo = unique[0];
-
-        // Check if custom template is selected
-        const selectedTpl = sessionStorage.getItem('cg_selected_template');
         let htmlPreview = '<div><strong>HTML preview</strong><p>This is a preview. Server builds real content.</p></div>';
 
-        if (selectedTpl) {
+        if (templateData) {
           try {
-            const tpl = JSON.parse(selectedTpl);
-            htmlPreview = tpl.html.replace(/{{username}}/g, 'John Doe')
+            htmlPreview = templateData.html.replace(/{{username}}/g, 'John Doe')
                                    .replace(/{{email}}/g, previewTo)
                                    .replace(/{{date}}/g, new Date().toLocaleDateString())
                                    .replace(/{{company}}/g, 'Sample Company')
@@ -332,13 +361,6 @@
             console.error('Preview error:', e);
           }
         }
-
-        const previewPayload = {
-          to: previewTo,
-          subject,
-          text: '--- plain text preview ---\\n(Email body is built server-side in this demo)',
-          html: htmlPreview
-        };
 
         // Show preview in a new window
         const previewWindow = window.open('', '_blank', 'width=800,height=600');
@@ -351,21 +373,15 @@
 
       // Build request to /send
       const headers = { 'Content-Type': 'application/json' };
-      let bodyObj = { emails: unique.join('\\n') , subject }; // server currently ignores subject in body but we include it for future
+      let bodyObj = { emails: unique.join('\\n') , subject };
 
-      // Check if custom template is selected
-      const selectedTpl = sessionStorage.getItem('cg_selected_template');
-      if (selectedTpl) {
-        try {
-          const tpl = JSON.parse(selectedTpl);
-          bodyObj.customTemplate = tpl.html;
-          bodyObj.subject = tpl.subject;
-          // Include attachments if present
-          if (tpl.attachments && Array.isArray(tpl.attachments) && tpl.attachments.length > 0) {
-            bodyObj.attachments = tpl.attachments;
-          }
-        } catch (e) {
-          console.error('Template error:', e);
+      // Include template data if available
+      if (templateData) {
+        bodyObj.customTemplate = templateData.html;
+        bodyObj.subject = templateData.subject;
+        // Include attachments if present
+        if (templateData.attachments && Array.isArray(templateData.attachments) && templateData.attachments.length > 0) {
+          bodyObj.attachments = templateData.attachments;
         }
       }
 
@@ -409,6 +425,9 @@
     const supabaseUrl = document.querySelector('meta[name="supabase-url"]')?.content;
     const supabaseAnonKey = document.querySelector('meta[name="supabase-anon-key"]')?.content;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+    // Expose Supabase client globally for use in sendEmails function
+    window.supabaseClient = supabase;
 
     // Fetch template details from Supabase when selected template exists
     async function loadTemplateFromSupabase() {
