@@ -21,7 +21,7 @@ const config = {
     rateLimit: 5,
     auth: {
       user: "info@codegrin.com",
-      pass: "Yourcode@2025",
+      pass: "YourFault@2025",
     },
     tls: {
       rejectUnauthorized: false,
@@ -38,7 +38,7 @@ const config = {
 const imapConfig = {
   imap: {
     user: "info@codegrin.com",
-    password: "Yourcode@2025",
+    password: "YourFault@2025",
     host: "imap.hostinger.com",
     port: 993,
     tls: true,
