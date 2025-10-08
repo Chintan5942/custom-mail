@@ -11,27 +11,28 @@ export const pdfPath = path.resolve("./Codegrin-Portfolio.pdf");
 // SMTP config with enhanced connection settings
 const config = {
   smtp: {
-    host: "smtp.hostinger.com",
-    port: 465,
-    secure: true,
-    pool: true,
-    maxConnections: 5,
-    maxMessages: 100,
-    rateDelta: 1000,
-    rateLimit: 5,
-    auth: {
-      user: "info@codegrin.com",
-      pass: "YourFault@2025",
-    },
-    tls: {
-      rejectUnauthorized: false,
-      minVersion: 'TLSv1.2'
-    },
-    connectionTimeout: 30000,
-    greetingTimeout: 30000,
-    socketTimeout: 60000,
-    logger: true,
-    debug: false,
+   host: "smtp.hostinger.com",
+  port: 587,               // use STARTTLS first (submission)
+  secure: false,          // false for STARTTLS; secure:true is SSL-wrapped (465)
+  auth: {
+    user: "info@codegrin.com",
+    pass: "YourFault@2025",
+  },
+  pool: true,
+  maxConnections: 5,
+  maxMessages: 100,
+  rateDelta: 1000,
+  rateLimit: 5,
+  tls: {
+    servername: "smtp.hostinger.com", // important for SNI
+    rejectUnauthorized: false,        // set true in prod if you have valid certs
+    minVersion: "TLSv1.2"
+  },
+  connectionTimeout: 30000,
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
+  logger: true,
+  debug: true,
   },
 };
 
