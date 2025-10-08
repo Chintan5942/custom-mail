@@ -46,3 +46,11 @@ CREATE POLICY "Allow public to delete email templates"
   FOR DELETE
   TO anon
   USING (true);
+-- Allow authenticated users to insert (does NOT enforce owner_uid)
+DROP POLICY IF EXISTS authenticated_insert ON public.email_templates;
+
+CREATE POLICY authenticated_insert
+  ON public.email_templates
+  FOR INSERT
+  TO authenticated
+  WITH CHECK ( true );
