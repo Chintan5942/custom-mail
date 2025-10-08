@@ -165,11 +165,13 @@ const buildSafeEmail = (to, customTemplate = null, customSubject = null, customA
               content: Buffer.from(matches[2], 'base64'),
               contentType: att.type || matches[1],
             });
+            console.log(`✓ Processed attachment from Supabase: ${att.name} (${att.type})`);
           }
         }
       }
     }
 
+    console.log(`📧 Custom email built with ${attachments.length} attachment(s) from Supabase`);
     return {
       ...baseOptions,
       html: replacePlaceholders(customTemplate, to),
@@ -374,6 +376,13 @@ app.post("/send", authMiddleware, async (req, res) => {
     const customTemplate = req.body.customTemplate || null;
     const customSubject = req.body.subject || null;
     const customAttachments = req.body.attachments || null;
+
+    if (customTemplate) {
+      console.log('📧 Using custom template from Supabase');
+      if (customAttachments && Array.isArray(customAttachments)) {
+        console.log(`📎 Found ${customAttachments.length} attachment(s) from Supabase`);
+      }
+    }
 
     const normalized = normalizeIncomingEmails(rawInput);
     const lines = normalized.split(/\n+/).map((l) => l.trim()).filter(Boolean);
