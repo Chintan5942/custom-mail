@@ -160,12 +160,25 @@ const buildSafeEmail = (to, customTemplate = null, customSubject = null, customA
           // Extract Base64 data from data URL (format: data:mime/type;base64,xxxxx)
           const matches = att.dataUrl.match(/^data:([^;]+);base64,(.+)$/);
           if (matches) {
-            attachments.push({
+            const isImage = att.type && att.type.startsWith('image/');
+            const isLogo = att.name.toLowerCase().includes('logo');
+
+            // If it's a logo/image, embed it with CID for inline display
+            const attachment = {
               filename: att.name,
               content: Buffer.from(matches[2], 'base64'),
               contentType: att.type || matches[1],
-            });
-            console.log(`✓ Processed attachment from Supabase: ${att.name} (${att.type})`);
+            };
+
+            // Assign CID to images so they can be embedded inline
+            if (isImage) {
+              attachment.cid = isLogo ? 'logo@codegrin' : `image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+              console.log(`✓ Processed inline image: ${att.name} with CID: ${attachment.cid}`);
+            } else {
+              console.log(`✓ Processed attachment: ${att.name} (${att.type})`);
+            }
+
+            attachments.push(attachment);
           }
         }
       }
