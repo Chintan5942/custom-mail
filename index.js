@@ -163,19 +163,26 @@ const buildSafeEmail = (to, customTemplate = null, customSubject = null, customA
             const isImage = att.type && att.type.startsWith('image/');
             const isLogo = att.name.toLowerCase().includes('logo');
 
+            // Clean base64 string (remove whitespace/newlines)
+            const base64Clean = matches[2].replace(/\s/g, '');
+
+            // Create buffer from clean base64 string
+            const buffer = Buffer.from(base64Clean, 'base64');
+
             // If it's a logo/image, embed it with CID for inline display
             const attachment = {
               filename: att.name,
-              content: Buffer.from(matches[2], 'base64'),
+              content: buffer,
               contentType: att.type || matches[1],
+              encoding: 'base64',
             };
 
             // Assign CID to images so they can be embedded inline
             if (isImage) {
               attachment.cid = isLogo ? 'logo@codegrin' : `image_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-              console.log(`✓ Processed inline image: ${att.name} with CID: ${attachment.cid}`);
+              console.log(`✓ Processed inline image: ${att.name} (${(buffer.length / 1024).toFixed(2)}KB) with CID: ${attachment.cid}`);
             } else {
-              console.log(`✓ Processed attachment: ${att.name} (${att.type})`);
+              console.log(`✓ Processed attachment: ${att.name} (${(buffer.length / 1024).toFixed(2)}KB)`);
             }
 
             attachments.push(attachment);
