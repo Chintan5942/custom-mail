@@ -318,7 +318,7 @@
         try {
           const selectedTpl = JSON.parse(selectedTplStr);
           if (selectedTpl.id && window.supabaseClient) {
-            // Fetch fresh template data from Supabase
+            // Fetch fresh template data from Supabase - ONLY SOURCE OF TRUTH
             const { data, error } = await window.supabaseClient
               .from('email_templates')
               .select('*')
@@ -333,14 +333,24 @@
 
             if (data) {
               templateData = data;
-              console.log('Template fetched from Supabase:', templateData.name);
+              console.log('✅ Template fetched from Supabase:', templateData.name);
+              if (templateData.attachments && templateData.attachments.length > 0) {
+                console.log(`✅ ${templateData.attachments.length} attachment(s) from Supabase:`, templateData.attachments.map(a => a.name));
+              }
+            } else {
+              console.error('Template not found in Supabase');
+              resultEl.textContent = 'Error: Template not found in database.';
+              return;
             }
           } else {
-            // Fallback to sessionStorage data if no ID or Supabase unavailable
-            templateData = selectedTpl;
+            console.error('No template ID or Supabase client unavailable');
+            resultEl.textContent = 'Error: Cannot load template - database connection issue.';
+            return;
           }
         } catch (e) {
           console.error('Template parsing error:', e);
+          resultEl.textContent = 'Error: Failed to parse template data.';
+          return;
         }
       }
 
@@ -451,15 +461,18 @@
           }
 
           if (data) {
-            // Update session storage with fresh data
-            sessionStorage.setItem('cg_selected_template', JSON.stringify(data));
+            // DO NOT store full data in sessionStorage - keep only ID
+            // sessionStorage only stores the template ID reference
 
             // Update UI
             document.getElementById('subject').value = data.subject;
             document.getElementById('templateNameDisplay').textContent = data.name;
             document.getElementById('templateNotice').style.display = 'block';
 
-            console.log('Template loaded from Supabase:', data.name);
+            console.log('✅ Template loaded from Supabase:', data.name);
+            if (data.attachments && data.attachments.length > 0) {
+              console.log(`✅ ${data.attachments.length} attachment(s) available from Supabase`);
+            }
           }
         }
       } catch (e) {
