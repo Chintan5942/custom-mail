@@ -171,12 +171,33 @@
     // Initialize UI state
     if (isLoggedIn()) showApp();
 
-    // Check for selected template from editor
-    function checkSelectedTemplate() {
+    // Check for selected template from editor (load from Supabase if available)
+    async function checkSelectedTemplate() {
       const selectedTpl = sessionStorage.getItem('cg_selected_template');
       if (selectedTpl) {
         try {
           const tpl = JSON.parse(selectedTpl);
+
+          // If template has an ID, fetch fresh data from Supabase
+          if (tpl.id && window.supabaseClient) {
+            const { data, error } = await window.supabaseClient
+              .from('email_templates')
+              .select('*')
+              .eq('id', tpl.id)
+              .maybeSingle();
+
+            if (!error && data) {
+              // Update with fresh data from Supabase
+              sessionStorage.setItem('cg_selected_template', JSON.stringify(data));
+              document.getElementById('subject').value = data.subject;
+              templateNameDisplay.textContent = data.name;
+              templateNotice.style.display = 'block';
+              console.log('Template loaded from Supabase:', data.name);
+              return;
+            }
+          }
+
+          // Fallback to sessionStorage data
           document.getElementById('subject').value = tpl.subject;
           templateNameDisplay.textContent = tpl.name;
           templateNotice.style.display = 'block';
@@ -198,8 +219,6 @@
       templateNotice.style.display = 'none';
       resultEl.textContent = 'Switched back to default template.';
     });
-
-    checkSelectedTemplate();
 
     // Fill demo credentials quickly (for testing)
     demoFill.addEventListener('click', () => {
@@ -470,6 +489,7 @@
     // Load template on page load
     if (sessionStorage.getItem('cg_selected_template')) {
       loadTemplateFromSupabase();
+      checkSelectedTemplate();
     }
   </script>
 </body>
