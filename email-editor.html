@@ -948,9 +948,12 @@
     };
 
     window.useTemplateById = async function(id) {
-      if (id) {
-        // Store ONLY the template ID, not the full data
-        sessionStorage.setItem('cg_selected_template', JSON.stringify({ id }));
+      const templates = await getTemplates();
+      const tpl = templates.find(t => t.id === id);
+
+      if (tpl) {
+        // Ensure attachments are included when using template
+        sessionStorage.setItem('cg_selected_template', JSON.stringify(tpl));
         window.location.href = '/';
       }
     };
