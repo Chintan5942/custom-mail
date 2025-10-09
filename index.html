@@ -86,7 +86,7 @@
     <!-- MAIN UI -->
     <div id="appCard" class="hidden" style="margin-top:18px;">
       <div id="templateNotice" class="alert" style="display:none; background:#d4edda; color:#155724; border:1px solid #c3e6cb; padding:12px; border-radius:8px; margin-bottom:16px;">
-        Using custom template: <strong id="templateNameDisplay"></strong>
+        Using custom template: <strong id="templateNameDisplay"></strong> <span id="templateAttachmentCount" class="small" style="margin-left:8px;"></span>
         <button id="clearTemplateBtn" class="btn secondary" style="margin-left:10px; padding:6px 12px; font-size:12px;">Use Default</button>
       </div>
 
@@ -171,36 +171,42 @@
     // Initialize UI state
     if (isLoggedIn()) showApp();
 
-    // Check for selected template from editor (load from Supabase if available)
+    // Store current template ID in memory only
+    let currentTemplateId = null;
+    let currentTemplateData = null;
+
+    // Check for selected template from URL or fetch all templates
     async function checkSelectedTemplate() {
-      const selectedTpl = sessionStorage.getItem('cg_selected_template');
-      if (selectedTpl) {
+      // Check URL parameters for template ID
+      const urlParams = new URLSearchParams(window.location.search);
+      const templateId = urlParams.get('template');
+
+      if (templateId && window.supabaseClient) {
         try {
-          const tpl = JSON.parse(selectedTpl);
+          const { data, error } = await window.supabaseClient
+            .from('email_templates')
+            .select('*')
+            .eq('id', templateId)
+            .maybeSingle();
 
-          // If template has an ID, fetch fresh data from Supabase
-          if (tpl.id && window.supabaseClient) {
-            const { data, error } = await window.supabaseClient
-              .from('email_templates')
-              .select('*')
-              .eq('id', tpl.id)
-              .maybeSingle();
+          if (!error && data) {
+            currentTemplateId = data.id;
+            currentTemplateData = data;
+            document.getElementById('subject').value = data.subject;
+            templateNameDisplay.textContent = data.name;
 
-            if (!error && data) {
-              // Update with fresh data from Supabase
-              sessionStorage.setItem('cg_selected_template', JSON.stringify(data));
-              document.getElementById('subject').value = data.subject;
-              templateNameDisplay.textContent = data.name;
-              templateNotice.style.display = 'block';
-              console.log('Template loaded from Supabase:', data.name);
-              return;
+            // Show attachment count if any
+            if (data.attachments && data.attachments.length > 0) {
+              document.getElementById('templateAttachmentCount').textContent =
+                `(${data.attachments.length} attachment${data.attachments.length > 1 ? 's' : ''})`;
             }
-          }
 
-          // Fallback to sessionStorage data
-          document.getElementById('subject').value = tpl.subject;
-          templateNameDisplay.textContent = tpl.name;
-          templateNotice.style.display = 'block';
+            templateNotice.style.display = 'block';
+            console.log('Template loaded from Supabase:', data.name);
+
+            // Clean up URL without page reload
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
         } catch (e) {
           console.error('Failed to load selected template:', e);
         }
@@ -214,8 +220,10 @@
 
     // Clear template selection
     clearTemplateBtn.addEventListener('click', () => {
-      sessionStorage.removeItem('cg_selected_template');
+      currentTemplateId = null;
+      currentTemplateData = null;
       document.getElementById('subject').value = 'Proposal for Development Partnership – Codegrin Technologies';
+      document.getElementById('templateAttachmentCount').textContent = '';
       templateNotice.style.display = 'none';
       resultEl.textContent = 'Switched back to default template.';
     });
@@ -330,36 +338,32 @@
         return;
       }
 
-      // Fetch template from Supabase if selected
+      // Fetch latest template data from Supabase if a template is selected
       let templateData = null;
-      const selectedTplStr = sessionStorage.getItem('cg_selected_template');
-      if (selectedTplStr) {
+      if (currentTemplateId && window.supabaseClient) {
         try {
-          const selectedTpl = JSON.parse(selectedTplStr);
-          if (selectedTpl.id && window.supabaseClient) {
-            // Fetch fresh template data from Supabase
-            const { data, error } = await window.supabaseClient
-              .from('email_templates')
-              .select('*')
-              .eq('id', selectedTpl.id)
-              .maybeSingle();
+          // Always fetch fresh data from Supabase
+          const { data, error } = await window.supabaseClient
+            .from('email_templates')
+            .select('*')
+            .eq('id', currentTemplateId)
+            .maybeSingle();
 
-            if (error) {
-              console.error('Failed to fetch template from Supabase:', error);
-              resultEl.textContent = 'Error: Failed to load template from database. ' + error.message;
-              return;
-            }
+          if (error) {
+            console.error('Failed to fetch template from Supabase:', error);
+            resultEl.textContent = 'Error: Failed to load template from database. ' + error.message;
+            return;
+          }
 
-            if (data) {
-              templateData = data;
-              console.log('Template fetched from Supabase:', templateData.name);
-            }
-          } else {
-            // Fallback to sessionStorage data if no ID or Supabase unavailable
-            templateData = selectedTpl;
+          if (data) {
+            templateData = data;
+            currentTemplateData = data;
+            console.log('Template fetched from Supabase:', templateData.name);
           }
         } catch (e) {
           console.error('Template parsing error:', e);
+          resultEl.textContent = 'Error: Failed to load template. ' + e.message;
+          return;
         }
       }
 
@@ -448,49 +452,8 @@
     // Expose Supabase client globally for use in sendEmails function
     window.supabaseClient = supabase;
 
-    // Fetch template details from Supabase when selected template exists
-    async function loadTemplateFromSupabase() {
-      const selectedTpl = sessionStorage.getItem('cg_selected_template');
-      if (!selectedTpl) return;
-
-      try {
-        const tpl = JSON.parse(selectedTpl);
-
-        // If template has an ID, fetch fresh data from Supabase
-        if (tpl.id) {
-          const { data, error } = await supabase
-            .from('email_templates')
-            .select('*')
-            .eq('id', tpl.id)
-            .maybeSingle();
-
-          if (error) {
-            console.error('Failed to fetch template from Supabase:', error);
-            return;
-          }
-
-          if (data) {
-            // Update session storage with fresh data
-            sessionStorage.setItem('cg_selected_template', JSON.stringify(data));
-
-            // Update UI
-            document.getElementById('subject').value = data.subject;
-            document.getElementById('templateNameDisplay').textContent = data.name;
-            document.getElementById('templateNotice').style.display = 'block';
-
-            console.log('Template loaded from Supabase:', data.name);
-          }
-        }
-      } catch (e) {
-        console.error('Error loading template from Supabase:', e);
-      }
-    }
-
-    // Load template on page load
-    if (sessionStorage.getItem('cg_selected_template')) {
-      loadTemplateFromSupabase();
-      checkSelectedTemplate();
-    }
+    // Load template on page load (from URL parameter)
+    checkSelectedTemplate();
   </script>
 </body>
 </html>

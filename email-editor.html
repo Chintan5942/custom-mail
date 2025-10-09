@@ -952,9 +952,8 @@
       const tpl = templates.find(t => t.id === id);
 
       if (tpl) {
-        // Ensure attachments are included when using template
-        sessionStorage.setItem('cg_selected_template', JSON.stringify(tpl));
-        window.location.href = '/';
+        // Redirect to mailer with template ID in URL
+        window.location.href = `/?template=${encodeURIComponent(tpl.id)}`;
       }
     };
 
